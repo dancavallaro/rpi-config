@@ -2,6 +2,9 @@
 # Loads default set of integrations. Do not remove.
 default_config:
 
+#logger:
+  #default: debug
+
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes
@@ -62,3 +65,7 @@ mqtt:
       state_topic: "nursery/twinkling/mode/status"
       payload_on: "3"
       payload_off: "0"
+binary_sensor:
+  - platform: flic
+    host: 172.17.0.1
+    ignored_click_types: [double, hold]
