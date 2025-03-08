@@ -1,0 +1,17 @@
+providers:
+  kubernetesCRD:
+    ingressClass: traefik-external
+  kubernetesIngress:
+    ingressClass: traefik-external
+  kubernetesGateway:
+    enabled: true # Let Traefik create the GatewayClass
+gatewayClass:
+  name: traefik-external
+gateway:
+  enabled: false # But I'll create a Gateway
+ingressClass:
+  name: traefik-external
+  isDefaultClass: false
+logs:
+  general:
+    level: DEBUG

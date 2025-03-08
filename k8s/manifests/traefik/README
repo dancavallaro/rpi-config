@@ -5,3 +5,8 @@ kubectl apply -f manifests/traefik/traefik.yaml
 
 # To update:
 helm upgrade --namespace=traefik --create-namespace --values=manifests/traefik/values.yaml --version 34.4.0 traefik traefik/traefik
+
+---
+
+helm install --namespace=internet --values=manifests/traefik/external/values.yaml --version 34.4.0 traefik traefik/traefik
+helm upgrade --namespace=internet --values=manifests/traefik/external/values.yaml --version 34.4.0 traefik traefik/traefik
