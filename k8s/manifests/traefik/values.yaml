@@ -5,6 +5,10 @@ additionalArguments:
   # easier to just do this for everything, and there's no real risk.
   - "--serverstransport.insecureskipverify=true"
 providers:
+  kubernetesCRD:
+    ingressClass: traefik
+  kubernetesIngress:
+    ingressClass: traefik
   kubernetesGateway:
     enabled: true # Let Traefik create the GatewayClass
 gateway:

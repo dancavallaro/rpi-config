@@ -31,40 +31,40 @@ spec:
     app: nginx-demo
   ports:
     - port: 80
-#---
-#kind: HTTPRoute
-#apiVersion: gateway.networking.k8s.io/v1
-#metadata:
-#  name: nginx-demo
-#spec:
-#  parentRefs:
-#    - group: gateway.networking.k8s.io
-#      kind: Gateway
-#      name: kong
-#  hostnames:
-#    - gw.o.cavnet.cloud
-#  rules:
-#    - matches:
-#        - path:
-#            type: PathPrefix
-#            value: /
-#      backendRefs:
-#        - name: nginx-demo
-#          port: 80
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1
 metadata:
   name: nginx-demo
 spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: traefik-external
+  hostnames:
+    - nginx.cavnet.io
   rules:
-    - host: nginx.o.cavnet.cloud
-      http:
-        paths:
-          - pathType: Prefix
-            path: "/"
-            backend:
-              service:
-                name: nginx-demo
-                port:
-                  number: 80
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: nginx-demo
+          port: 80
+---
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  name: nginx-demo
+#spec:
+#  rules:
+#    - host: nginx.o.cavnet.cloud
+#      http:
+#        paths:
+#          - pathType: Prefix
+#            path: "/"
+#            backend:
+#              service:
+#                name: nginx-demo
+#                port:
+#                  number: 80
