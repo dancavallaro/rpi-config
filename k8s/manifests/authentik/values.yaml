@@ -16,3 +16,8 @@ postgresql:
     password: "VLFcLBZdB7GADqFPW3f8vqZvOLV6M3cyvX8U2xG01iBAizOnl4fGERo09baPjsFDYWNHOU8iUsOFTswK"
 redis:
   enabled: true
+server:
+  ingress:
+    tls:
+      - hosts:
+        - authentik.o.cavnet.cloud
