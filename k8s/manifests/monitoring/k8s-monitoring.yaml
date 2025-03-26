@@ -1,0 +1,56 @@
+# TODO: delete this!
+cluster:
+  name: foo
+destinations:
+  - name: logs
+    type: loki
+    url: http://loki-http/loki/api/v1/push
+  - name: metrics
+    type: prometheus
+    url: http://mimir-http/prometheus/api/v1/push
+clusterMetrics:
+  enabled: true
+  apiServer:
+    enabled: true
+  controlPlane:
+    enabled: false
+  kube-state-metrics:
+    enabled: true
+  kubeControllerManager:
+    enabled: false
+  kubeDNS:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubelet:
+    enabled: false
+  kubeletProbes:
+    enabled: false
+  kubeletResource:
+    enabled: false
+  node-exporter:
+    enabled: false
+  # ------------------
+  cadvisor:
+    enabled: false
+  windows-exporter:
+    enabled: false
+  kubeProxy:
+    enabled: false
+alloy-metrics:
+  enabled: true
+#podLogs:
+#  enabled: true
+#  gatherMethod: kubernetesApi
+#  collector: alloy-logs
+#alloy-logs:
+#  enabled: true
+#  alloy:
+#    mounts:
+#      varlog: false
+#    clustering:
+#      enabled: true
+#clusterEvents:
+#  enabled: true
+#alloy-singleton:
+#  enabled: true

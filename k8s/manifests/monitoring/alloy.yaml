@@ -70,6 +70,8 @@ spec:
           ports:
             - name: http
               containerPort: 12345
+            - name: jsonlogs
+              containerPort: 48296
           volumeMounts:
             - name: alloy-conf
               mountPath: /etc/alloy.d
@@ -91,3 +93,15 @@ spec:
   ports:
     - port: 80
       targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alloy-jsonlogs
+  namespace: monitoring
+spec:
+  selector:
+    app: alloy
+  ports:
+    - port: 80
+      targetPort: jsonlogs
