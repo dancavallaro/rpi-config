@@ -13,3 +13,5 @@ configMapGenerator:
       - conf/alloy/common.alloy
       - conf/alloy/podlogs.alloy
       - conf/alloy/clusterevents.alloy
+      - conf/alloy/taloslogs.alloy
+      # TODO: add clustermetrics

@@ -1,0 +1,16 @@
+otelcol.exporter.debug "echo" {
+  verbosity = "detailed"
+}
+
+otelcol.receiver.tcplog "logserver" {
+  listen_address = "0.0.0.0:48296"
+
+  output {
+    //logs = [otelcol.exporter.loki.default.input]
+    logs = [otelcol.exporter.debug.echo.input]
+  }
+}
+
+otelcol.exporter.loki "default" {
+  forward_to = [loki.echo.echo.receiver]
+}
