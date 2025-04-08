@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources-conf
+  namespace: bf3
+data:
+  in-cluster.yaml: |-
+    apiVersion: 1
+    datasources:
+      - name: Mimir
+        type: prometheus
+        access: proxy
+        url: http://mimir-http.bf3/prometheus
+        editable: false
+        isDefault: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-conf
+  namespace: bf3
+data:
+  grafana.conf: |-
+    [server]
+    root_url = https://grafana-bf3.o.cavnet.cloud
+    
+    [log]
+    level = info
+    filters = tsdb.loki:warn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: bf3
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:11.6.0
+          args:
+            - --config=/etc/grafana/config/grafana.conf
+          ports:
+            - name: http
+              containerPort: 3000
+          volumeMounts:
+            - name: grafana-conf
+              mountPath: /etc/grafana/config
+              readOnly: true
+            - name: grafana-datasources-conf
+              mountPath: /etc/grafana/provisioning/datasources
+              readOnly: true
+      volumes:
+        - name: grafana-conf
+          configMap:
+            name: grafana-conf
+            optional: false
+        - name: grafana-datasources-conf
+          configMap:
+            name: grafana-datasources-conf
+            optional: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: bf3
+spec:
+  selector:
+    app: grafana
+  ports:
+    - port: 80
+      targetPort: http
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: grafana
+  namespace: bf3
+spec:
+  parentRefs:
+    - namespace: default
+      name: private-gateway
+      sectionName: websecure
+  hostnames:
+    - grafana-bf3.o.cavnet.cloud
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: grafana
+          port: 80

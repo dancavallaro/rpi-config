@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: bf3
+  name: chaos-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chaos-proxy
+  template:
+    metadata:
+      labels:
+        app: chaos-proxy
+    spec:
+      containers:
+        - name: proxy
+          image: ivarref/mikkmokk-proxy:v0.1.63
+          env:
+            - name: PROXY_BIND
+              value: 0.0.0.0
+            - name: ADMIN_BIND
+              value: 0.0.0.0
+            - name: DESTINATION_URL
+              value: http://mimir-http.bf3
+          ports:
+            - containerPort: 7070
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: bf3
+  name: chaos-proxy-http
+spec:
+  type: ClusterIP
+  selector:
+    app: chaos-proxy
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: bf3
+  name: chaos-proxy-admin
+spec:
+  type: ClusterIP
+  selector:
+    app: chaos-proxy
+  ports:
+    - port: 80
+      targetPort: 7070

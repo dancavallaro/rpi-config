@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mimir-conf
+  namespace: bf3
+data:
+  conf.yaml: |-
+    server:
+      log_level: info
+    target: all
+    multitenancy_enabled: false
+    ingester:
+      ring:
+        replication_factor: 1
+        kvstore:
+          store: inmemory
+    common:
+      storage:
+        backend: filesystem
+        filesystem:
+          dir: /mimir/data
+    blocks_storage:
+      tsdb:
+        dir: /mimir/tsdb
+    ruler_storage:
+      backend: filesystem
+      filesystem:
+        dir: /mimir/ruler
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mimir
+  namespace: bf3
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: mimir
+  template:
+    metadata:
+      labels:
+        app: mimir
+    spec:
+      containers:
+        - name: mimir
+          image: grafana/mimir:2.16.0
+          args:
+            - -config.file=/etc/mimir/conf.yaml
+          ports:
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+            - name: mimir-conf
+              mountPath: /etc/mimir
+              readOnly: true
+      volumes:
+        - name: mimir-conf
+          configMap:
+            name: mimir-conf
+            optional: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mimir-http
+  namespace: bf3
+spec:
+  selector:
+    app: mimir
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: http
