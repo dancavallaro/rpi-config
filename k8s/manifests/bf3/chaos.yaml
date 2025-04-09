@@ -23,6 +23,10 @@ spec:
               value: 0.0.0.0
             - name: DESTINATION_URL
               value: http://mimir-http.bf3
+            - name: DELAY_BEFORE_PERCENTAGE
+              value: "10"
+            - name: DELAY_BEFORE_MS
+              value: "2000"
           ports:
             - containerPort: 7070
             - containerPort: 8080
@@ -33,7 +37,7 @@ metadata:
   namespace: bf3
   name: chaos-proxy-http
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: chaos-proxy
   ports:
