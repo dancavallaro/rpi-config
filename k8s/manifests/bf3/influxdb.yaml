@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: bf3
+  name: influxdb
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:
+        - name: influxdb
+          image: influxdb:2.7.9
+          env:
+            - name: DOCKER_INFLUXDB_INIT_MODE
+              value: setup
+            - name: DOCKER_INFLUXDB_INIT_USERNAME
+              value: admin
+            - name: DOCKER_INFLUXDB_INIT_PASSWORD
+              value: adminpassword
+            - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+              value: admintoken
+            - name: DOCKER_INFLUXDB_INIT_ORG
+              value: home
+            - name: DOCKER_INFLUXDB_INIT_BUCKET
+              value: home
+          ports:
+            - containerPort: 8086
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb-http
+  namespace: bf3
+  annotations:
+    "coredns.io/hostname": influxdb.o.cavnet.cloud
+spec:
+  selector:
+    app: influxdb
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: http

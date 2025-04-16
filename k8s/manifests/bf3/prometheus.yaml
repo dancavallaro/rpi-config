@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: bf3
+  name: prometheus
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v3.3.0
+          args:
+            - --web.enable-remote-write-receiver
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+          ports:
+            - containerPort: 9090
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-http
+  namespace: bf3
+  annotations:
+    "coredns.io/hostname": prometheus.o.cavnet.cloud
+spec:
+  selector:
+    app: prometheus
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: http
