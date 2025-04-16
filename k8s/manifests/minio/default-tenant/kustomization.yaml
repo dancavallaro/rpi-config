@@ -10,18 +10,45 @@ helmCharts:
     namespace: minio-default
     # TODO: enable ingresses for the console and API
     # TODO: configure OIDC
+    # TODO: figure out how to use OIDC with AWS CLI
     # TODO: figure out how to use STS for programmatic access
     valuesInline:
       tenant:
         name: default
+        # TODO: can i ditch this after enabling OIDC?
         configuration:
-          name: minio-env-config
+          name: minio-temp-config
         configSecret:
-          name: minio-env-config
+          name: minio-temp-config
+          accessKey: admin
+          secretKey: temporary
+        env:
+          - name: MINIO_ROOT_USER
+            value: admin
+          - name: MINIO_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: minio-root-user
+                key: password
         pools:
           - servers: 1
             name: default-pool
             volumesPerServer: 1
             size: 10Gi
         certificate:
+          # Disable TLS (fronted by ingress
           requestAutoCert: false
+      extraResources: []
+      ingress:
+        api:
+          enabled: true
+          tls:
+            - hosts:
+              - s3.o.cavnet.cloud
+          host: s3.o.cavnet.cloud
+        console:
+          enabled: true
+          tls:
+            - hosts:
+              - minio.o.cavnet.cloud
+          host: minio.o.cavnet.cloud
