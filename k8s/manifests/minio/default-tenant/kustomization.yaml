@@ -23,13 +23,15 @@ helmCharts:
           accessKey: admin
           secretKey: temporary
         env:
-          - name: MINIO_ROOT_USER
-            value: admin
-          - name: MINIO_ROOT_PASSWORD
+          - name: MINIO_IDENTITY_OPENID_CONFIG_URL
+            value: https://pocket-id.o.cavnet.cloud/.well-known/openid-configuration
+          - name: MINIO_IDENTITY_OPENID_CLIENT_ID
+            value: 875d8377-b842-4c24-9790-104bc1502135
+          - name: MINIO_IDENTITY_OPENID_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: minio-root-user
-                key: password
+                name: minio-oidc-config
+                key: client-secret
         pools:
           - servers: 1
             name: default-pool
