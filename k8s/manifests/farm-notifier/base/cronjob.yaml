@@ -11,24 +11,27 @@ spec:
         metadata:
           labels:
             app: farm-notifier
+          annotations:
+            cloud.dancav.io/aws-iamra-role-profile: farm-notifier-role
+            cloud.dancav.io/aws-iamra-cert-secret: farm-notifier-cert
         spec:
           restartPolicy: OnFailure
           containers:
             - name: farm-notifier
-              image: ghcr.io/dancavallaro/farm-notifier/farm-notifier:0.2.0
+              image: ghcr.io/dancavallaro/farm-notifier/farm-notifier:0.2.2
               args:
                 - REPLACEME
               env:
                 - name: AWS_DEFAULT_REGION
                   value: us-east-1
-                - name: AWS_ENDPOINT_URL
+                - name: S3_ENDPOINT_URL
                   value: http://minio.minio:9000
-                - name: AWS_ACCESS_KEY_ID
+                - name: S3_ACCESS_KEY_ID
                   valueFrom:
                     secretKeyRef:
                       name: minio-creds
                       key: access-key
-                - name: AWS_SECRET_ACCESS_KEY
+                - name: S3_SECRET_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
                       name: minio-creds
