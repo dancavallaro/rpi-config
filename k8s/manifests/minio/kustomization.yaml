@@ -16,6 +16,8 @@ helmCharts:
       resources:
         requests:
           memory: 500Mi
+      #service:
+      #  port: 80
       ingress:
         enabled: true
         hosts:
