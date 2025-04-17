@@ -55,7 +55,6 @@ metadata:
   name: grafana-conf
   namespace: monitoring
 data:
-  # TODO: add client_secret via env var
   grafana.conf: |-
     [server]
     root_url = https://grafana.o.cavnet.cloud
@@ -71,7 +70,7 @@ data:
     token_url = https://pocket-id.o.cavnet.cloud/api/oidc/token
     client_id = 538f8e7f-2679-446c-8d72-38ec9d3a7410
     scopes = openid email profile groups
-    role_attribute_path = contains(groups[*], 'admins') && 'Admin' || 'Viewer'
+    role_attribute_path = contains(groups[*], 'superusers') && 'Admin' || 'None'
 
     [feature_toggles]
     alertmanagerRemoteOnly = true
@@ -111,6 +110,11 @@ spec:
           env:
             - name: GF_PATHS_DATA
               value: /grafana
+            - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-oidc
+                  key: client-secret
           args:
             - --config=/etc/grafana/config/grafana.conf
           ports:
