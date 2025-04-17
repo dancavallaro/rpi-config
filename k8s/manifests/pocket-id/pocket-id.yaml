@@ -1,4 +1,5 @@
 # TODO: argocd app
+# TODO: then delete keycloak (+ PVs/data/app) after migration
 apiVersion: v1
 kind: Namespace
 metadata:
