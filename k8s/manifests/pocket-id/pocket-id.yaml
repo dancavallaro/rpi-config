@@ -41,6 +41,8 @@ spec:
               value: https://pocket-id.o.cavnet.cloud
             - name: TRUST_PROXY
               value: "true"
+            - name: UPDATE_CHECK_DISABLED
+              value: "true"
           ports:
             - containerPort: 80
           volumeMounts:
