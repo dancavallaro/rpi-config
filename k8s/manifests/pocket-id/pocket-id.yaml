@@ -85,3 +85,15 @@ spec:
       backendRefs:
         - name: pocket-id
           port: 80
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pocketid-superusers-binding
+subjects:
+  - kind: Group
+    name: superusers # Pocket ID group
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
