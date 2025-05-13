@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# TODO: argocd app, create namespace
+namespace: velero
+resources:
+  - namespace.yaml
+  - aws-creds.yaml
+helmCharts:
+  - name: velero
+    repo: https://vmware-tanzu.github.io/helm-charts
+    releaseName: velero
+    version: 9.1.2
+    namespace: velero
+    includeCRDs: true
+    valuesInline:
+      upgradeCRDs: false
+      snapshotsEnabled: false
+      deployNodeAgent: true
+      image:
+        repository: ghcr.io/dancavallaro/velero
+        tag: v1.16.0-awsiamram
+      podAnnotations:
+        cloud.dancav.io/aws-iamra-role-profile: velero-backup-role
+        cloud.dancav.io/aws-iamra-cert-secret: velero-backup-cert
+      configuration:
+        features: EnableCSI
+        defaultSnapshotMoveData: true
+        backupStorageLocation:
+          - name: default
+            provider: aws
+            bucket: nuc-talos-backups
+            prefix: velero
+      initContainers:
+        - name: velero-plugin-for-aws
+          image: velero/velero-plugin-for-aws:v1.12.0
+          volumeMounts:
+            - mountPath: /target
+              name: plugins

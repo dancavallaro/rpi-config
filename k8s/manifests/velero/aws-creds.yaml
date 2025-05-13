@@ -1,0 +1,25 @@
+apiVersion: cloud.dancav.io/v1
+kind: AwsIamRaRoleProfile
+metadata:
+  name: velero-backup-role
+spec:
+  trustAnchorArn: arn:aws:rolesanywhere:us-east-1:484396241422:trust-anchor/1acbff48-4cbe-4593-9fea-caf869c51b1a
+  profileArn: arn:aws:rolesanywhere:us-east-1:484396241422:profile/cf0dca44-1d61-41d5-9963-50f3477b8b02
+  roleArn: arn:aws:iam::484396241422:role/S3BackupsRole
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: velero-backup-cert
+spec:
+  revisionHistoryLimit: 1
+  secretName: velero-backup-cert
+  duration: 24h
+  isCA: false
+  usages:
+    - client auth
+  dnsNames:
+    - velero
+  issuerRef:
+    name: cluster-ca-issuer
+    kind: ClusterIssuer

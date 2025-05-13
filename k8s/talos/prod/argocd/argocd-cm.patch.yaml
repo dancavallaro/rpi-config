@@ -4,6 +4,7 @@ metadata:
   name: argocd-cm
 data:
   url: "https://argocd.o.cavnet.cloud"
+  application.resourceTrackingMethod: "annotation+label"
   resource.exclusions: |
     - apiGroups:
       - cilium.io
