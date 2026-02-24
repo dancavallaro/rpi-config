@@ -2,6 +2,7 @@ In-progress:
 * Migrating curing/superjuice calculators to static k8s-hosted website
 
 TODOs:
+* Figure out how to add IKEA air sensor to HA
 * Submit kubectl-unmount to Krew index (need to rename first)
 * Storage/NAS:
   * Migrate (some? all?) local-path PVs to Synology iSCSI
